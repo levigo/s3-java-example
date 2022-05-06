@@ -52,7 +52,7 @@ public class S3ClientTest {
         try (final InputStream resourceAsStream = this.getClass().getResourceAsStream("/test.txt")) {
             final URI presignedS3Uri = s3Client.putObjectAndCreatePsUri(resourceAsStream, "text/plain", "test.txt");
             assertNotNull(presignedS3Uri);
-            final S3Object s3Object = s3Client.getObject(presignedS3Uri);
+            final S3Object s3Object = s3Client.getObjectViaPresignedUrl(presignedS3Uri);
             final S3ObjectInputStream objectContent = s3Object.getObjectContent();
             assertNotNull(objectContent);
             s3Client.deleteObject(presignedS3Uri);
