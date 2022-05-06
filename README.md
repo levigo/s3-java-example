@@ -20,3 +20,6 @@ publisher:
 ```
 
 And after that remove the `@Disabled` annotation.
+
+The build process of this repository creates a jar and a jar-with-dependencies that includes all the dependencies for
+this project into on fat jar.
