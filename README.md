@@ -1,4 +1,4 @@
-# S3 java client demo repository
+# S3 java client demo repository (with presigned url showcase)
 This project serves as an example of how to create a s3 client in java for custom instances (not provided by aws) in 
 order to:
 - upload a file to s3 and receiving a presigned url that allows to access the file for a certain duration
