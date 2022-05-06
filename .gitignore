@@ -1,0 +1,14 @@
+**/target/
+**/bin/
+**/generated-src/
+**/.settings/
+**/.externalToolBuilders/
+**/.groovy/
+*.project
+*.classpath
+
+# exclude IntelliJ IDEA files
+.idea
+**/*.iml
+**/vcs.xml
+/src/test/resources/application-test.yml
