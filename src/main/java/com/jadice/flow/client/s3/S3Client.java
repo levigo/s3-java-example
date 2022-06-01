@@ -53,6 +53,10 @@ public class S3Client {
         this.presignedUrlLifetime = presignedUrlLifetime;
     }
 
+    public URI putObjectAndCreatePsUri(final InputStream stream, final String mimeType, final String filename) {
+        return this.putObjectAndCreatePsUri(stream, mimeType, filename, null);
+    }
+
     /**
      * Method to showcase the upload of a s3 object and the creation of a corresponding pre-signed url.
      *
@@ -61,10 +65,13 @@ public class S3Client {
      * @param filename The filename of the file.
      * @return The presignedUrl for accessing the s3 object without separate authentication.
      */
-    public URI putObjectAndCreatePsUri(final InputStream stream, final String mimeType, final String filename) {
+    public URI putObjectAndCreatePsUri(final InputStream stream, final String mimeType, final String filename, final Long contentLength) {
         final String bucket = configurationProperties.getBucket();
         final Date expiration = computeExpirationDate(this.presignedUrlLifetime);
         final ObjectMetadata metadata = new ObjectMetadata();
+        if (contentLength != null) {
+            metadata.setContentLength(contentLength);
+        }
         metadata.setExpirationTime(expiration);
         if (mimeType != null) {
             metadata.setContentType(mimeType);
