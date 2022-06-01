@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Bump version and create tag
         id: semanticversion
@@ -43,7 +43,7 @@ jobs:
 
       ## Configure JDK 11
       - name: Set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -52,10 +52,13 @@ jobs:
       ## Build with maven
       - name: Prepare maven settings
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_URL: ${{ secrets.LEVIGO_NEXUS_REPO_RELEASES }}
+          REGISTRY_URL: ${{ secrets.LEVIGO_NEXUS_REGISTRY_RELEASES }}
+          REPOSITORY_USERID: ${{ secrets.LEVIGO_NEXUS_USERNAME }}
+          REPOSITORY_CREDENTIALS: ${{ secrets.LEVIGO_NEXUS_PASSWORD }}
         run: |
           mkdir -p ~/.m2
-          echo "<settings><servers><server><id>github</id><username>x-access-token</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml 
+          envsubst < ./.github/settings.xml > ~/.m2/settings.xml
 
       - name: Set version
         id: version
@@ -70,17 +73,8 @@ jobs:
 
       ## Deploy
       - name: Deploy package
-        env:
-          GPG_EXECUTABLE: gpg
-          GPG_SECRET_KEYS: ${{ secrets.LEVIGO_GPG_KEYS }}
-          GPG_OWNERTRUST: ${{ secrets.LEVIGO_GPG_OWNERTRUST }}
-          GPG_PASSPHRASE: ${{ secrets.LEVIGO_GPG_PASSPHRASE }}
-          SONATYPE_USERNAME: ${{ secrets.LEVIGO_SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.LEVIGO_SONATYPE_PASSWORD }}
         run: |
-          echo "$GPG_SECRET_KEYS" | base64 --decode | $GPG_EXECUTABLE --import --no-tty --batch --yes
-          echo "$GPG_OWNERTRUST" | base64 --decode | $GPG_EXECUTABLE --import-ownertrust --no-tty --batch --yes
-          mvn $MAVEN_CLI_OPTS deploy --settings .maven.xml -Dmaven.test.skip.exec=true -U -Prelease
+          mvn $MAVEN_CLI_OPTS package -Dmaven.test.failure.ignore=true
 
       ## Notify Slack
       - name: Notify slack
