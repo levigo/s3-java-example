@@ -9,9 +9,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Region;
 
-/**
- *
- */
 public class S3ClientBuilder {
 
     public AmazonS3 build(final ConfigProperties configProperties) {
