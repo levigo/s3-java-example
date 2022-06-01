@@ -21,6 +21,10 @@
         <!-- plugins -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+        <!-- sonarcloud -->
+        <sonar.organization>levigo</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.projectKey>levigo_s3-java-example</sonar.projectKey>
     </properties>
 
     <dependencies>

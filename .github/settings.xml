@@ -1,0 +1,14 @@
+<settings>
+    <servers>
+        <server>
+            <id>${REPO_URL}</id>
+            <username>${REPOSITORY_USERID}</username>
+            <password>${REPOSITORY_CREDENTIALS}</password>
+        </server>
+        <server>
+            <id>${REGISTRY_URL}</id>
+            <username>${REPOSITORY_USERID}</username>
+            <password>${REPOSITORY_CREDENTIALS}</password>
+        </server>
+    </servers>
+</settings>
