@@ -49,7 +49,6 @@ jobs:
 
       - name: Prepare maven settings
         env:
-          REPO_URL: ${{ secrets.NEXUS2_REPO_RELEASES }}
           REPOSITORY_USERID: ${{ secrets.PUB_NEXUS2_USERNAME_RW }}
           REPOSITORY_CREDENTIALS: ${{ secrets.PUB_NEXUS2_PASSWORD_RW }}
         run: |
@@ -73,7 +72,9 @@ jobs:
           fail_if_no_tests: false
 
       - name: Deploy artifacts
-        run: mvn $MAVEN_CLI_OPTS deploy -Dmaven.test.skip.exec=true -Dmaven.install.skip=true
+        env:
+          REPO_URL: ${{ secrets.NEXUS2_REPO_RELEASES }}
+        run: mvn $MAVEN_CLI_OPTS deploy -DaltDeploymentRepository=levigo::default::${REPO_URL} -Dmaven.test.skip.exec=true -Dmaven.install.skip=true
 
       - name: Notify slack
         uses: hennejg/slack-build-notifier@v1.1

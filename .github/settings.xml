@@ -1,7 +1,7 @@
 <settings>
     <servers>
         <server>
-            <id>${REPO_URL}</id>
+            <id>levigo</id>
             <username>${REPOSITORY_USERID}</username>
             <password>${REPOSITORY_CREDENTIALS}</password>
         </server>
