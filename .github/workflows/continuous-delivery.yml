@@ -18,7 +18,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 10
 
     steps:
@@ -65,12 +65,12 @@ jobs:
       - name: Perform build
         run: mvn $MAVEN_CLI_OPTS package -DskipTests -Dmaven.test.failure.ignore=true
 
-     - name: Publish Test Report
-       uses: scacap/action-surefire-report@v1
-       with:
-         github_token: ${{ secrets.GITHUB_TOKEN }}
-         fail_on_test_failures: true
-         fail_if_no_tests: false
+      - name: Publish Test Report
+        uses: scacap/action-surefire-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_test_failures: true
+          fail_if_no_tests: false
 
       - name: Deploy artifacts
         run: mvn $MAVEN_CLI_OPTS deploy -Dmaven.test.skip.exec=true -Dmaven.install.skip=true
