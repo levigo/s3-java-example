@@ -76,6 +76,15 @@ jobs:
           REPO_URL: ${{ secrets.NEXUS2_REPO_RELEASES }}
         run: mvn $MAVEN_CLI_OPTS deploy -DaltDeploymentRepository=levigo::default::${REPO_URL} -Dmaven.test.skip.exec=true -Dmaven.install.skip=true
 
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.semanticversion.outputs.new_tag }}
+          release_name: Release ${{ steps.semanticversion.outputs.new_version }}
+
       - name: Notify slack
         uses: hennejg/slack-build-notifier@v1.1
         with:
