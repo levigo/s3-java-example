@@ -100,9 +100,6 @@ public class S3Client {
         logger.info("Handling file download {}", path);
         final String[] objectCredentials = path.split(S3_PATH_SEPARATOR);
         final GetObjectRequest req = new GetObjectRequest(objectCredentials[1], objectCredentials[2]);
-        if (objectCredentials.length > 3) {
-            throw new IllegalStateException("URI not correct");
-        }
         try {
             return this.awsS3Client.getObject(req);
         } catch (Exception e) {
@@ -121,9 +118,6 @@ public class S3Client {
         logger.info("Handling file delete {}", path);
         String[] objectCredentials = path.split(S3_PATH_SEPARATOR);
         DeleteObjectRequest req = new DeleteObjectRequest(objectCredentials[1], objectCredentials[2]);
-        if (objectCredentials.length > 3) {
-            throw new IllegalStateException("URI not correct");
-        }
         try {
             awsS3Client.deleteObject(req);
         } catch (Exception e) {
