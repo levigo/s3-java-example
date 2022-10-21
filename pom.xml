@@ -13,14 +13,14 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <!-- dependencies -->
-        <aws-java-sdk-s3.version>1.12.261</aws-java-sdk-s3.version>
+        <aws-java-sdk-s3.version>1.12.324</aws-java-sdk-s3.version>
         <slf4j.version>1.7.36</slf4j.version>
         <jaxb.version>2.3.1</jaxb.version>
-        <junit.version>5.8.2</junit.version>
-        <snakeyml.version>1.31</snakeyml.version>
+        <junit.version>5.9.1</junit.version>
+        <snakeyml.version>1.33</snakeyml.version>
         <!-- plugins -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <maven-assembly-plugin.version>3.4.1</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
         <!-- sonarcloud -->
         <sonar.organization>levigo</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
