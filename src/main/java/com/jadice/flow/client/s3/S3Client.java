@@ -53,6 +53,14 @@ public class S3Client {
         this.presignedUrlLifetime = presignedUrlLifetime;
     }
 
+    /**
+     * Method to showcase the upload of a s3 object and the creation of a corresponding pre-signed url.
+     *
+     * @param stream The inputStream that will be uploaded.
+     * @param mimeType The mimeType of the inputStream that shall be uploaded.
+     * @param filename The filename of the file.
+     * @return The presignedUrl for accessing the s3 object without separate authentication.
+     */
     public URI putObjectAndCreatePsUri(final InputStream stream, final String mimeType, final String filename) {
         return this.putObjectAndCreatePsUri(stream, mimeType, filename, null);
     }
@@ -63,6 +71,7 @@ public class S3Client {
      * @param stream The inputStream that will be uploaded.
      * @param mimeType The mimeType of the inputStream that shall be uploaded.
      * @param filename The filename of the file.
+     * @param contentLength The content length of the file that shall be uploaded to s3.
      * @return The presignedUrl for accessing the s3 object without separate authentication.
      */
     public URI putObjectAndCreatePsUri(final InputStream stream, final String mimeType, final String filename, final Long contentLength) {
@@ -87,6 +96,61 @@ public class S3Client {
         request.getRequestClientOptions().setReadLimit(Integer.MAX_VALUE);
         awsS3Client.putObject(request);
         return createS3URI(bucket, identifier, expiration);
+    }
+
+    /**
+     * Method to showcase the upload of a s3 object without the creation of a corresponding pre-signed url.
+     *
+     * @param stream The inputStream that will be uploaded.
+     * @param mimeType The mimeType of the inputStream that shall be uploaded.
+     * @param filename The filename of the file.
+     * @return the url to the uploaded s3 file.
+     */
+    public URI putObject(final InputStream stream, final String mimeType, final String filename) {
+        return this.putObject(stream, mimeType, filename, null);
+    }
+
+    /**
+     * Method to showcase the upload of a s3 object without the creation of a corresponding pre-signed url.
+     *
+     * @param stream The inputStream that will be uploaded.
+     * @param mimeType The mimeType of the inputStream that shall be uploaded.
+     * @param filename The filename of the file.
+     * @param contentLength The content length of the file that will be uploaded.
+     * @return the url to the uploaded s3 file.
+     */
+    public URI putObject(final InputStream stream, final String mimeType, final String filename, final Long contentLength) {
+        final String bucket = configurationProperties.getBucket();
+        final Date expiration = computeExpirationDate(this.presignedUrlLifetime);
+        final String identifier = UUID.randomUUID() + "_" + filename + ".dat";
+        final ObjectMetadata metadata = new ObjectMetadata();
+        if (contentLength != null) {
+            metadata.setContentLength(contentLength);
+        }
+        metadata.setExpirationTime(expiration);
+        if (mimeType != null) {
+            metadata.setContentType(mimeType);
+        }
+        final PutObjectRequest request = new PutObjectRequest( //
+                bucket, //
+                identifier, //
+                stream, //
+                metadata //
+        );
+        // we don't care about any kind of stupid read limit, as our streams are actually seekable. Take that, crappy InputStream hierarchy!
+        request.getRequestClientOptions().setReadLimit(Integer.MAX_VALUE);
+        awsS3Client.putObject(request);
+        return URI.create(configurationProperties.getProtocol() + "://" + configurationProperties.getEndpoint() + "/" + configurationProperties.getBucket() + "/" + identifier);
+    }
+
+    /**
+     * Method to showcase the retrieval of a s3 object via its previously generated pre-signed url.
+     *
+     * @param s3Url uri of the s3 object that shall be downloaded.
+     * @return the s3 object that belongs to this url or IllegalStateException.
+     */
+    public S3Object getObject(final URI s3Url) {
+        return this.getObjectViaPresignedUrl(s3Url);
     }
 
     /**
