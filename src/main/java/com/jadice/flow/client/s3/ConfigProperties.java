@@ -4,6 +4,9 @@ import com.amazonaws.services.s3.model.Region;
 
 import java.net.URI;
 
+/**
+ * Configuration object that contains all the necessary connection information for accessing the s3 storage.
+ */
 public class ConfigProperties {
     URI endpoint;
     String bucket;
