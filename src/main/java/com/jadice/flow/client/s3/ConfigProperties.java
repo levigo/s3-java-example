@@ -8,6 +8,10 @@ import java.net.URI;
  * Configuration object that contains all the necessary connection information for accessing the s3 storage.
  */
 public class ConfigProperties {
+
+    /**
+     * The endpoint url to the s3 storage.
+     */
     URI endpoint;
     String bucket;
     Region region;
