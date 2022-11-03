@@ -53,14 +53,6 @@ jobs:
       - name: Perform build
         run: mvn $MAVEN_CLI_OPTS verify -Dmaven.test.failure.ignore=true
 
-      ## Publish test report
-      - name: Publish Test Report
-        uses: scacap/action-surefire-report@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_test_failures: true
-          fail_if_no_tests: false
-
       ## Static code analysis with sonarqube
       - name: Perform sonar analysis
         if: env.SONAR_ANALYSIS_ENABLED == 'true'

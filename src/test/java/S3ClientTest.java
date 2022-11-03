@@ -47,7 +47,7 @@ public class S3ClientTest {
         }
     }
 
-    // @Test
+    @Test
     public void test() throws IOException {
         try (final InputStream resourceAsStream = this.getClass().getResourceAsStream("/test.txt")) {
             final URI presignedS3Uri = s3Client.putObjectAndCreatePsUri(resourceAsStream, "text/plain", "test.txt");
@@ -59,7 +59,7 @@ public class S3ClientTest {
         }
     }
 
-    // @Test
+    @Test
     public void test2() throws IOException {
         try (final InputStream resourceAsStream = this.getClass().getResourceAsStream("/test.txt")) {
             final URI s3Uri = s3Client.putObject(resourceAsStream, "text/plain", "test.txt");
