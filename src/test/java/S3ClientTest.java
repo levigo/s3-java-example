@@ -58,4 +58,16 @@ public class S3ClientTest {
             s3Client.deleteObject(presignedS3Uri);
         }
     }
+
+    @Test
+    public void test2() throws IOException {
+        try (final InputStream resourceAsStream = this.getClass().getResourceAsStream("/test.txt")) {
+            final URI s3Uri = s3Client.putObject(resourceAsStream, "text/plain", "test.txt");
+            assertNotNull(s3Uri);
+            final S3Object s3Object = s3Client.getObject(s3Uri);
+            final S3ObjectInputStream objectContent = s3Object.getObjectContent();
+            assertNotNull(objectContent);
+            s3Client.deleteObject(s3Uri);
+        }
+    }
 }
