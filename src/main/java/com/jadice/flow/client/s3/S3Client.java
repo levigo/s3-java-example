@@ -45,6 +45,15 @@ public class S3Client {
 
     public S3Client( //
             final ConfigProperties configProperties, //
+            final Duration presignedUrlLifetime //
+    ) {
+        this.configurationProperties = configProperties;
+        this.awsS3Client = new S3ClientBuilder().build(configProperties);
+        this.presignedUrlLifetime = presignedUrlLifetime;
+    }
+
+    public S3Client( //
+            final ConfigProperties configProperties, //
             final AmazonS3 awsS3Client, //
             final Duration presignedUrlLifetime //
     ) {
@@ -175,7 +184,7 @@ public class S3Client {
      * Method to showcase the deletion of a s3 object via its previously generated pre-signed url.
      *
      * @param presignedUri the previously generated pre-signed url.
-     * @return IllegalStateException if deletion fails.
+     * @throws IllegalStateException if deletion fails.
      */
     public void deleteObject(final URI presignedUri) {
         final String path = presignedUri.getPath();

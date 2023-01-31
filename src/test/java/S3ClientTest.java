@@ -1,9 +1,7 @@
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.jadice.flow.client.s3.ConfigProperties;
 import com.jadice.flow.client.s3.S3Client;
-import com.jadice.flow.client.s3.S3ClientBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -41,9 +39,7 @@ public class S3ClientTest {
                     secretKey, //
                     protocol //
             );
-            final S3ClientBuilder s3ClientBuilder = new S3ClientBuilder();
-            final AmazonS3 awsS3Client = s3ClientBuilder.build(configProperties);
-            s3Client = new S3Client(configProperties, awsS3Client, Duration.ofHours(1));
+            s3Client = new S3Client(configProperties, Duration.ofHours(1));
         }
     }
 
