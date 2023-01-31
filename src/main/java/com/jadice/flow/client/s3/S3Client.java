@@ -43,6 +43,12 @@ public class S3Client {
      */
     private final ConfigProperties configurationProperties;
 
+    public S3Client(ConfigProperties configProperties, long presignedUrlLifetimeInMinutes){
+        this.configurationProperties = configProperties;
+        this.awsS3Client = new S3ClientBuilder().build(configProperties);
+        this.presignedUrlLifetime = Duration.ofMinutes(presignedUrlLifetimeInMinutes);
+    }
+
     public S3Client( //
             final ConfigProperties configProperties, //
             final Duration presignedUrlLifetime //
