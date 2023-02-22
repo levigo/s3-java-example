@@ -100,7 +100,7 @@ public class S3Client {
         if (mimeType != null) {
             metadata.setContentType(mimeType);
         }
-        final String identifier = UUID.randomUUID() + "_" + filename + ".dat";
+        final String identifier = getIdentifier(filename);
         final PutObjectRequest request = new PutObjectRequest( //
                 bucket, //
                 identifier, //
@@ -137,7 +137,7 @@ public class S3Client {
     public URI putObject(final InputStream stream, final String mimeType, final String filename, final Long contentLength) {
         final String bucket = configurationProperties.getBucket();
         final Date expiration = computeExpirationDate(this.presignedUrlLifetime);
-        final String identifier = UUID.randomUUID() + "_" + filename + ".dat";
+        final String identifier = getIdentifier(filename);
         final ObjectMetadata metadata = new ObjectMetadata();
         if (contentLength != null) {
             metadata.setContentLength(contentLength);
@@ -155,7 +155,7 @@ public class S3Client {
         // we don't care about any kind of stupid read limit, as our streams are actually seekable. Take that, crappy InputStream hierarchy!
         request.getRequestClientOptions().setReadLimit(Integer.MAX_VALUE);
         awsS3Client.putObject(request);
-        return URI.create(configurationProperties.getProtocol() + "://" + configurationProperties.getEndpoint() + "/" + configurationProperties.getBucket() + "/" + identifier);
+        return getUri(configurationProperties, identifier);
     }
 
     /**
@@ -211,5 +211,24 @@ public class S3Client {
 
     protected URI createS3URI(final String bucket, final String fileName, final Date expiration) {
         return URI.create(awsS3Client.generatePresignedUrl(bucket, fileName, expiration).toString());
+    }
+
+    protected static String getIdentifier(final String filename) {
+        if (filename.matches(".*\\.[a-z]+")) {
+            return UUID.randomUUID() + "_" + filename;
+        } else {
+            return UUID.randomUUID() + "_" + filename + ".dat";
+        }
+    }
+
+    protected static URI getUri(ConfigProperties configProperties, String identifier) {
+        final String scheme = configProperties.getEndpoint().getScheme() != null
+            ? ""
+            : configProperties.getProtocol() + "://";
+        return URI.create(String.format("%s%s/%s/%s", //
+            scheme, //
+            configProperties.getEndpoint(), //
+            configProperties.getBucket(), //
+            identifier));
     }
 }

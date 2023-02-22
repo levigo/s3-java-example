@@ -1,7 +1,8 @@
+package com.jadice.flow.client.s3;
+
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.jadice.flow.client.s3.ConfigProperties;
-import com.jadice.flow.client.s3.S3Client;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class S3ClientTest {
     }
 
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         try (final InputStream resourceAsStream = this.getClass().getResourceAsStream("/test.txt")) {
             final URI presignedS3Uri = s3Client.putObjectAndCreatePsUri(resourceAsStream, "text/plain", "test.txt");
             assertNotNull(presignedS3Uri);
@@ -56,7 +57,7 @@ public class S3ClientTest {
     }
 
     @Test
-    public void test2() throws IOException {
+    void test2() throws IOException {
         try (final InputStream resourceAsStream = this.getClass().getResourceAsStream("/test.txt")) {
             final URI s3Uri = s3Client.putObject(resourceAsStream, "text/plain", "test.txt");
             assertNotNull(s3Uri);
