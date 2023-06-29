@@ -1,8 +1,8 @@
 package com.jadice.flow.client.s3;
 
-import com.amazonaws.services.s3.model.Region;
-
 import java.net.URI;
+
+import com.amazonaws.services.s3.model.Region;
 
 /**
  * Configuration object that contains all the necessary connection information for accessing the s3 storage.
@@ -18,6 +18,7 @@ public class ConfigProperties {
     String accessKey;
     String secretKey;
     String protocol;
+    boolean trustSelfSigned = false;
 
     public ConfigProperties() {}
 
@@ -27,7 +28,8 @@ public class ConfigProperties {
         final Region region, //
         final String accessKey, //
         final String secretKey, //
-        final String protocol //
+        final String protocol ,//
+        final boolean trustSelfSigned //
     ) {
         this.endpoint = endpoint;
         this.bucket = bucket;
@@ -35,6 +37,7 @@ public class ConfigProperties {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.protocol = protocol;
+        this.trustSelfSigned = trustSelfSigned;
     }
 
     public String getAccessKey() {
@@ -83,5 +86,13 @@ public class ConfigProperties {
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    public boolean isTrustSelfSigned() {
+        return trustSelfSigned;
+    }
+
+    public void setTrustSelfSigned(boolean trustSelfSigned) {
+        this.trustSelfSigned = trustSelfSigned;
     }
 }

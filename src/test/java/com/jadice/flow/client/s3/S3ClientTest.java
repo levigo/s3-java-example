@@ -32,13 +32,15 @@ public class S3ClientTest {
             final String accessKey = (String) s3.get("access-key");
             final String secretKey = (String) s3.get("secret-key");
             final String protocol = (String) s3.get("protocol");
+            final boolean trustSelfSigned = (boolean) s3.get("trustSelfSigned");
             final ConfigProperties configProperties = new ConfigProperties( //
                     URI.create(endpoint), //
                     bucket, //
                     null, //
                     accessKey, //
                     secretKey, //
-                    protocol //
+                    protocol, //
+                    trustSelfSigned //
             );
             s3Client = new S3Client(configProperties, Duration.ofHours(1));
         }
