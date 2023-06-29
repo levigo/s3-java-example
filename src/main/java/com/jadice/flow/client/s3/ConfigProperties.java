@@ -19,6 +19,7 @@ public class ConfigProperties {
     String secretKey;
     String protocol;
     boolean trustSelfSigned = false;
+    boolean trustAll = false;
 
     public ConfigProperties() {}
 
@@ -29,7 +30,8 @@ public class ConfigProperties {
         final String accessKey, //
         final String secretKey, //
         final String protocol ,//
-        final boolean trustSelfSigned //
+        final boolean trustSelfSigned, //
+        final boolean trustAll //
     ) {
         this.endpoint = endpoint;
         this.bucket = bucket;
@@ -38,6 +40,7 @@ public class ConfigProperties {
         this.secretKey = secretKey;
         this.protocol = protocol;
         this.trustSelfSigned = trustSelfSigned;
+        this.trustAll = trustAll;
     }
 
     public String getAccessKey() {
@@ -94,5 +97,13 @@ public class ConfigProperties {
 
     public void setTrustSelfSigned(boolean trustSelfSigned) {
         this.trustSelfSigned = trustSelfSigned;
+    }
+
+    public boolean isTrustAll() {
+        return trustAll;
+    }
+
+    public void setTrustAll(boolean trustAll) {
+        this.trustAll = trustAll;
     }
 }
