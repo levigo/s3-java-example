@@ -1,6 +1,7 @@
 package com.jadice.flow.client.s3;
 
 import java.net.URI;
+import java.util.Objects;
 
 import com.amazonaws.services.s3.model.Region;
 
@@ -105,5 +106,22 @@ public class ConfigProperties {
 
     public void setTrustAll(boolean trustAll) {
         this.trustAll = trustAll;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        ConfigProperties that = (ConfigProperties) o;
+        return trustSelfSigned == that.trustSelfSigned && trustAll == that.trustAll && Objects.equals(endpoint,
+            that.endpoint) && Objects.equals(bucket, that.bucket) && region == that.region && Objects.equals(accessKey,
+            that.accessKey) && Objects.equals(secretKey, that.secretKey) && Objects.equals(protocol, that.protocol);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(endpoint, bucket, region, accessKey, secretKey, protocol, trustSelfSigned, trustAll);
     }
 }
