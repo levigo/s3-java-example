@@ -15,7 +15,7 @@ public class ConfigProperties {
      */
     URI endpoint;
     String bucket;
-    Region region;
+    String region;
     String accessKey;
     String secretKey;
     String protocol;
@@ -27,7 +27,7 @@ public class ConfigProperties {
     public ConfigProperties( //
         final URI endpoint, //
         final String bucket, //
-        final Region region, //
+        final String region, //
         final String accessKey, //
         final String secretKey, //
         final String protocol ,//
@@ -76,11 +76,11 @@ public class ConfigProperties {
         this.bucket = bucket;
     }
 
-    public Region getRegion() {
+    public String getRegion() {
         return region;
     }
 
-    public void setRegion(final Region region) {
+    public void setRegion(final String region) {
         this.region = region;
     }
 

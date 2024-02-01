@@ -64,9 +64,9 @@ public class S3ClientBuilder {
     }
 
     protected String determineRegion(final ConfigProperties configProperties) {
-        if (configProperties.getRegion() != null) {
-            return configProperties.getRegion().getFirstRegionId();
-        }
+      if (configProperties.getRegion() == null) {
         return Region.EU_Frankfurt.getFirstRegionId();
+      }
+      return configProperties.getRegion();
     }
 }
