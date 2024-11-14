@@ -30,8 +30,7 @@ public class S3ClientBuilder {
             new AwsClientBuilder.EndpointConfiguration(configProperties.getEndpoint().toString(),
                 region)).withCredentials(new AWSStaticCredentialsProvider(
             new BasicAWSCredentials(configProperties.getAccessKey(), configProperties.getSecretKey())));
-        // prefer the path style access, as minio uses that mode
-        builder.setPathStyleAccessEnabled(true);
+        builder.setPathStyleAccessEnabled(configProperties.isPathStyleAccessEnabled());
 
         final ClientConfiguration clientConfiguration = new ClientConfiguration();
 
@@ -40,7 +39,7 @@ public class S3ClientBuilder {
             builder.withClientConfiguration(clientConfiguration.withProtocol(Protocol.HTTP));
         } else if (configProperties.isTrustSelfSigned() || configProperties.isTrustAll()) {
             // trust self-signed certificates
-            SSLContext sslContext = null;
+            SSLContext sslContext;
             try {
                 sslContext = new SSLContextBuilder().loadTrustMaterial(getTrustStrategy(configProperties)).build();
             } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {

@@ -22,7 +22,6 @@ import org.yaml.snakeyaml.Yaml;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
-@Disabled
 public class S3ClientTest {
   private static S3Client s3Client;
 
@@ -35,11 +34,12 @@ public class S3ClientTest {
       final Map s3 = (Map) publisher.get("s3");
       final String bucket = (String) s3.get("bucket");
       final String endpoint = (String) s3.get("endpoint");
-      final String accessKey = (String) s3.get("access-key");
-      final String secretKey = (String) s3.get("secret-key");
+      final String accessKey = (String) s3.get("accessKey");
+      final String secretKey = (String) s3.get("secretKey");
       final String protocol = (String) s3.get("protocol");
       final boolean trustSelfSigned = (boolean) s3.get("trustSelfSigned");
       final boolean trustAll = (boolean) s3.get("trustAll");
+      final boolean pathStyleAccessEnabled = (boolean) s3.get("pathStyleAccessEnabled");
       final ConfigProperties configProperties = new ConfigProperties( //
           URI.create(endpoint), //
           bucket, //
@@ -48,7 +48,8 @@ public class S3ClientTest {
           secretKey, //
           protocol, //
           trustSelfSigned, //
-          trustAll //
+          trustAll, //
+          pathStyleAccessEnabled
       );
       s3Client = new S3Client(configProperties, Duration.ofHours(1));
     }
@@ -67,6 +68,7 @@ public class S3ClientTest {
     assertTrue(identifier.endsWith(expected));
   }
 
+  @Disabled
   @Test
   void test() throws IOException {
     try (final InputStream resourceAsStream = this.getClass().getResourceAsStream("/test.txt")) {
@@ -79,6 +81,7 @@ public class S3ClientTest {
     }
   }
 
+  @Disabled
   @Test
   void test2() throws IOException {
     try (final InputStream resourceAsStream = this.getClass().getResourceAsStream("/test.txt")) {

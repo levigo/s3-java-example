@@ -3,8 +3,6 @@ package com.jadice.flow.client.s3;
 import java.net.URI;
 import java.util.Objects;
 
-import com.amazonaws.services.s3.model.Region;
-
 /**
  * Configuration object that contains all the necessary connection information for accessing the s3 storage.
  */
@@ -21,6 +19,8 @@ public class ConfigProperties {
     String protocol;
     boolean trustSelfSigned = false;
     boolean trustAll = false;
+    // prefer the path style access, as minio uses that mode
+    boolean pathStyleAccessEnabled = true;
 
     public ConfigProperties() {}
 
@@ -30,18 +30,33 @@ public class ConfigProperties {
         final String region, //
         final String accessKey, //
         final String secretKey, //
-        final String protocol ,//
+        final String protocol, //
         final boolean trustSelfSigned, //
         final boolean trustAll //
     ) {
-        this.endpoint = endpoint;
-        this.bucket = bucket;
-        this.region = region;
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
-        this.protocol = protocol;
-        this.trustSelfSigned = trustSelfSigned;
-        this.trustAll = trustAll;
+      this(endpoint, bucket, region, accessKey, secretKey, protocol, trustSelfSigned, trustAll, true);
+    }
+
+    public ConfigProperties( //
+        final URI endpoint, //
+        final String bucket, //
+        final String region, //
+        final String accessKey, //
+        final String secretKey, //
+        final String protocol, //
+        final boolean trustSelfSigned, //
+        final boolean trustAll, //
+        final boolean pathStyleAccessEnabled //
+    ) {
+      this.endpoint = endpoint;
+      this.bucket = bucket;
+      this.region = region;
+      this.accessKey = accessKey;
+      this.secretKey = secretKey;
+      this.protocol = protocol;
+      this.trustSelfSigned = trustSelfSigned;
+      this.trustAll = trustAll;
+      this.pathStyleAccessEnabled = pathStyleAccessEnabled;
     }
 
     public String getAccessKey() {
@@ -108,6 +123,14 @@ public class ConfigProperties {
         this.trustAll = trustAll;
     }
 
+    public boolean isPathStyleAccessEnabled() {
+        return pathStyleAccessEnabled;
+    }
+
+    public void setPathStyleAccessEnabled(boolean pathStyleAccessEnabled) {
+        this.pathStyleAccessEnabled = pathStyleAccessEnabled;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -115,13 +138,15 @@ public class ConfigProperties {
         if (o == null || getClass() != o.getClass())
             return false;
         ConfigProperties that = (ConfigProperties) o;
-        return trustSelfSigned == that.trustSelfSigned && trustAll == that.trustAll && Objects.equals(endpoint,
-            that.endpoint) && Objects.equals(bucket, that.bucket) && region == that.region && Objects.equals(accessKey,
-            that.accessKey) && Objects.equals(secretKey, that.secretKey) && Objects.equals(protocol, that.protocol);
+        return trustSelfSigned == that.trustSelfSigned && trustAll == that.trustAll && pathStyleAccessEnabled == that.pathStyleAccessEnabled && Objects.equals(
+            endpoint, that.endpoint) && Objects.equals(bucket, that.bucket) && Objects.equals(region,
+            that.region) && Objects.equals(accessKey, that.accessKey) && Objects.equals(secretKey,
+            that.secretKey) && Objects.equals(protocol, that.protocol);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(endpoint, bucket, region, accessKey, secretKey, protocol, trustSelfSigned, trustAll);
+        return Objects.hash(endpoint, bucket, region, accessKey, secretKey, protocol, trustSelfSigned, trustAll,
+            pathStyleAccessEnabled);
     }
 }
