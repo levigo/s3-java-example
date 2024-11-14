@@ -1,0 +1,11 @@
+publisher:
+  s3:
+    endpoint: "https://s3.us-east-404.amazonaws.com"
+    bucket: "s3-java-example"
+    region: "us-east-404"
+    accessKey: "1234567890"
+    secretKey: "abcdefghijklmnopqrstuvwxyz"
+    protocol: "https"
+    trustSelfSigned: false
+    trustAll: false
+    pathStyleAccessEnabled: true

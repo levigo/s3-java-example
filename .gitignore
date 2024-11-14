@@ -11,4 +11,3 @@
 .idea
 **/*.iml
 **/vcs.xml
-/src/test/resources/application-test.yml
