@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -23,10 +24,6 @@ import com.amazonaws.services.s3.model.S3Object;
  * use a custom s3 service solution such as minio as a backend.
  */
 public class S3Client {
-  /**
-   * The path separator that is used by s3 services.
-   */
-  public static final String S3_PATH_SEPARATOR = "/";
 
   /**
    * Logging.
@@ -164,31 +161,34 @@ public class S3Client {
   }
 
   /**
-   * Method to showcase the retrieval of a s3 object via its previously generated pre-signed url.
+   * Method to showcase the retrieval of a s3 object via its url.
    *
    * @param s3Url uri of the s3 object that shall be downloaded.
    * @return the s3 object that belongs to this url or IllegalStateException.
    */
   public S3Object getObject(final URI s3Url) {
-    return this.getObjectViaPresignedUrl(s3Url);
-  }
-
-  /**
-   * Method to showcase the retrieval of a s3 object via its previously generated pre-signed url.
-   *
-   * @param presignedUrl the previously generated pre-signed url.
-   * @return the s3 object that belongs to this pre-signed url or IllegalStateException.
-   */
-  public S3Object getObjectViaPresignedUrl(final URI presignedUrl) {
-    final String path = presignedUrl.getPath();
-    logger.info("Handling file download {}", path);
-    final String[] objectCredentials = path.split(S3_PATH_SEPARATOR);
-    final GetObjectRequest req = new GetObjectRequest(objectCredentials[1], objectCredentials[2]);
+    final AmazonS3URI amazonS3URI = new AmazonS3URI(s3Url);
+    logger.info("Handling file download {}", amazonS3URI.getURI().toString());
+    final String bucketName = amazonS3URI.getBucket();
+    final String key = amazonS3URI.getKey();
+    logger.debug("Creating GetObjectRequest with bucket={} and key={}", bucketName, key);
+    final GetObjectRequest req = new GetObjectRequest(bucketName, key);
     try {
       return this.awsS3Client.getObject(req);
     } catch (Exception e) {
       throw new IllegalStateException("Error while fetching s3 object: " + e.getMessage());
     }
+  }
+
+  /**
+   * Method to showcase the retrieval of a s3 object via its previously generated pre-signed url.
+   * It just passes the URL on to the default {@link #getObject(URI)} method. 
+   *
+   * @param presignedUrl the previously generated pre-signed url.
+   * @return the s3 object that belongs to this pre-signed url or IllegalStateException.
+   */
+  public S3Object getObjectViaPresignedUrl(final URI presignedUrl) {
+    return getObject(presignedUrl);
   }
 
   /**
@@ -198,10 +198,12 @@ public class S3Client {
    * @throws IllegalStateException if deletion fails.
    */
   public void deleteObject(final URI presignedUri) {
-    final String path = presignedUri.getPath();
-    logger.info("Handling file delete {}", path);
-    String[] objectCredentials = path.split(S3_PATH_SEPARATOR);
-    DeleteObjectRequest req = new DeleteObjectRequest(objectCredentials[1], objectCredentials[2]);
+    final AmazonS3URI amazonS3URI = new AmazonS3URI(presignedUri);
+    logger.info("Handling file delete {}", amazonS3URI.getURI().toString());
+    final String bucketName = amazonS3URI.getBucket();
+    final String key = amazonS3URI.getKey();
+    logger.debug("Creating DeleteObjectRequest with bucket={} and key={}", bucketName, key);
+    DeleteObjectRequest req = new DeleteObjectRequest(bucketName, key);
     try {
       awsS3Client.deleteObject(req);
     } catch (Exception e) {
