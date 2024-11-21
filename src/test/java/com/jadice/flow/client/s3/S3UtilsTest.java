@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import java.net.URI;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class S3UtilsTest {
 
@@ -31,6 +33,19 @@ class S3UtilsTest {
     configProperties3.setProtocol("https");
     final URI uriWithProtocol3 = S3Client.getUri(configProperties3, "test-identifier");
     assertEquals("https://test.endpoint.sample.com/test-bucket/test-identifier", uriWithProtocol3.toString());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "https://test.endpoint.sample.com/test-bucket/test-identifier",
+      "https://s3.us-east-1.amazonaws.com/test-bucket/test-identifier",
+      "https://test-bucket.s3.us-east-1.amazonaws.com/test-identifier"
+  })
+  void test_getBucketNameAndKey(String uriString) {
+    String[] bucketNameAndKey = S3Client.getBucketNameAndKey(
+        URI.create(uriString));
+    assertEquals("test-bucket", bucketNameAndKey[0]);
+    assertEquals("test-identifier", bucketNameAndKey[1]);
   }
 
   private ConfigProperties createConfigPropertiesWithEndpoint(String endpoint) {

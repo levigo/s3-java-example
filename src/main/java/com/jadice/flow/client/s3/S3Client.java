@@ -167,12 +167,10 @@ public class S3Client {
    * @return the s3 object that belongs to this url or IllegalStateException.
    */
   public S3Object getObject(final URI s3Url) {
-    final AmazonS3URI amazonS3URI = new AmazonS3URI(s3Url);
-    logger.info("Handling file download {}", amazonS3URI.getURI().toString());
-    final String bucketName = amazonS3URI.getBucket();
-    final String key = amazonS3URI.getKey();
-    logger.debug("Creating GetObjectRequest with bucket={} and key={}", bucketName, key);
-    final GetObjectRequest req = new GetObjectRequest(bucketName, key);
+    logger.info("Handling file download {}", s3Url.toString());
+    final String[] bucketNameAndKey = getBucketNameAndKey(s3Url);
+    logger.debug("Creating GetObjectRequest with bucket={} and key={}", bucketNameAndKey[0], bucketNameAndKey[1]);
+    final GetObjectRequest req = new GetObjectRequest(bucketNameAndKey[0], bucketNameAndKey[1]);
     try {
       return this.awsS3Client.getObject(req);
     } catch (Exception e) {
@@ -198,12 +196,10 @@ public class S3Client {
    * @throws IllegalStateException if deletion fails.
    */
   public void deleteObject(final URI presignedUri) {
-    final AmazonS3URI amazonS3URI = new AmazonS3URI(presignedUri);
-    logger.info("Handling file delete {}", amazonS3URI.getURI().toString());
-    final String bucketName = amazonS3URI.getBucket();
-    final String key = amazonS3URI.getKey();
-    logger.debug("Creating DeleteObjectRequest with bucket={} and key={}", bucketName, key);
-    DeleteObjectRequest req = new DeleteObjectRequest(bucketName, key);
+    logger.info("Handling file delete {}", presignedUri.toString());
+    final String[] bucketNameAndKey = getBucketNameAndKey(presignedUri);
+    logger.debug("Creating DeleteObjectRequest with bucket={} and key={}", bucketNameAndKey[0], bucketNameAndKey[1]);
+    DeleteObjectRequest req = new DeleteObjectRequest(bucketNameAndKey[0], bucketNameAndKey[1]);
     try {
       awsS3Client.deleteObject(req);
     } catch (Exception e) {
@@ -237,5 +233,20 @@ public class S3Client {
         configProperties.getEndpoint(), //
         configProperties.getBucket(), //
         identifier));
+  }
+
+  protected static String[] getBucketNameAndKey(final URI uri) {
+    try {
+      final AmazonS3URI amazonS3URI = new AmazonS3URI(uri);
+      return new String[]{
+          amazonS3URI.getBucket(), amazonS3URI.getKey()
+      };
+    } catch (Exception e) {
+      String path = uri.getPath();
+      if (path.startsWith("/")) {
+        path = path.substring(1);
+      }
+      return path.split("/");
+    }
   }
 }
