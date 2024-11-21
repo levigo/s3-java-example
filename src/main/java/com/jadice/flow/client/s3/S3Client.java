@@ -235,7 +235,7 @@ public class S3Client {
         identifier));
   }
 
-  protected String[] getBucketNameAndKey(final URI uri) {
+  protected static String[] getBucketNameAndKey(final URI uri) {
     try {
       final AmazonS3URI amazonS3URI = new AmazonS3URI(uri);
       return new String[]{
