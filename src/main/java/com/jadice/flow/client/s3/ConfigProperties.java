@@ -13,6 +13,7 @@ public class ConfigProperties {
      */
     URI endpoint;
     String bucket;
+    String subdir;
     String region;
     String accessKey;
     String secretKey;
@@ -34,12 +35,13 @@ public class ConfigProperties {
         final boolean trustSelfSigned, //
         final boolean trustAll //
     ) {
-      this(endpoint, bucket, region, accessKey, secretKey, protocol, trustSelfSigned, trustAll, true);
+      this(endpoint, bucket, "", region, accessKey, secretKey, protocol, trustSelfSigned, trustAll, true);
     }
 
     public ConfigProperties( //
         final URI endpoint, //
         final String bucket, //
+        final String subdir, //
         final String region, //
         final String accessKey, //
         final String secretKey, //
@@ -50,6 +52,7 @@ public class ConfigProperties {
     ) {
       this.endpoint = endpoint;
       this.bucket = bucket;
+      this.subdir = sanitizePath(subdir);
       this.region = region;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
@@ -91,6 +94,14 @@ public class ConfigProperties {
         this.bucket = bucket;
     }
 
+    public String getSubdir() {
+        return subdir;
+    }
+
+    public void setSubdir(String subdir) {
+        this.subdir = sanitizePath(subdir);
+    }
+
     public String getRegion() {
         return region;
     }
@@ -129,6 +140,16 @@ public class ConfigProperties {
 
     public void setPathStyleAccessEnabled(boolean pathStyleAccessEnabled) {
         this.pathStyleAccessEnabled = pathStyleAccessEnabled;
+    }
+    
+    public static String sanitizePath(String s) {
+      if (s == null || s.isEmpty()) {
+        return "";
+      } else if (s.endsWith("/")) {
+        return s;
+      } else {
+        return s + "/";
+      }
     }
 
     @Override

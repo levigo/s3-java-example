@@ -2,11 +2,13 @@ package com.jadice.flow.client.s3;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class S3UtilsTest {
@@ -35,6 +37,33 @@ class S3UtilsTest {
     assertEquals("https://test.endpoint.sample.com/test-bucket/test-identifier", uriWithProtocol3.toString());
   }
 
+
+  @ParameterizedTest
+  @ValueSource(strings = {"subdir", "sub/subdir", "trailing/", "sub/sub/"})
+  @NullAndEmptySource
+  void test_getUriWithSubdirectory(String subdir) {
+    final ConfigProperties configProperties = createConfigPropertiesWithEndpoint("test.endpoint.sample.com", subdir);
+    final S3Client s3Client = new S3Client(configProperties, 5L);
+    final URI uriWithProtocol = S3Client.getUri(configProperties, s3Client.getIdentifier("test-identifier"));
+    subdir = subdir == null ? "" : subdir;
+    String uri = uriWithProtocol.toString();
+    System.out.println("uri: " + uri + "\nsubdir: " + subdir);
+    assertTrue(uri.startsWith("test://test.endpoint.sample.com/test-bucket/" + subdir));
+    assertTrue(uri.endsWith("_test-identifier.dat"));
+  }
+
+  @Test
+  void test_getIdentifier() {
+    final ConfigProperties configProperties = createConfigPropertiesWithEndpoint("test.endpoint.sample.com", "subdir");
+    final S3Client s3Client = new S3Client(configProperties, 5L);
+
+    final String identifier = s3Client.getIdentifier("my-file.pdf");
+    System.out.println(identifier);
+    assertTrue(identifier.startsWith("subdir/"));
+    assertTrue(identifier.endsWith("_my-file.pdf"));
+    assertTrue(identifier.matches("subdir/[a-z0-9-]+_my-file\\.pdf"));
+  }
+
   @ParameterizedTest
   @ValueSource(strings = {
       "https://test.endpoint.sample.com/test-bucket/test-identifier",
@@ -54,5 +83,20 @@ class S3UtilsTest {
     configProperties.setBucket("test-bucket");
     configProperties.setProtocol("test");
     return configProperties;
+  }
+
+  private ConfigProperties createConfigPropertiesWithEndpoint(String endpoint, String subdir) {
+    return new ConfigProperties(
+        URI.create(endpoint), //
+        "test-bucket", //
+        subdir, //
+        "", //
+        "", //
+        "", //
+        "test", //
+        false, //
+        false, //
+        false //
+    );
   }
 }
