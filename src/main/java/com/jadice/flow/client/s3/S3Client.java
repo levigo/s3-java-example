@@ -218,9 +218,9 @@ public class S3Client {
 
   protected String getIdentifier(final String filename) {
     if (filename.matches(".*\\.[a-z]+")) {
-      return UUID.randomUUID() + "_" + filename;
+      return configurationProperties.getSubdir() + UUID.randomUUID() + "_" + filename;
     } else {
-      return UUID.randomUUID() + "_" + filename + ".dat";
+      return configurationProperties.getSubdir() + UUID.randomUUID() + "_" + filename + ".dat";
     }
   }
 

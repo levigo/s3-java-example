@@ -33,6 +33,7 @@ public class S3ClientTest {
       final Map publisher = (Map) yamlMap.get("publisher");
       final Map s3 = (Map) publisher.get("s3");
       final String bucket = (String) s3.get("bucket");
+      final String subdir = (String) s3.get("subdir");
       final String endpoint = (String) s3.get("endpoint");
       final String accessKey = (String) s3.get("accessKey");
       final String secretKey = (String) s3.get("secretKey");
@@ -43,6 +44,7 @@ public class S3ClientTest {
       final ConfigProperties configProperties = new ConfigProperties( //
           URI.create(endpoint), //
           bucket, //
+          subdir,
           null, //
           accessKey, //
           secretKey, //

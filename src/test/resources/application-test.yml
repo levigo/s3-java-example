@@ -2,6 +2,7 @@ publisher:
   s3:
     endpoint: "https://s3.us-east-404.amazonaws.com"
     bucket: "s3-java-example"
+    subdir: "results"
     region: "us-east-404"
     accessKey: "1234567890"
     secretKey: "abcdefghijklmnopqrstuvwxyz"
