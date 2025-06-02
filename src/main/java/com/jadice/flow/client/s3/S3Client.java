@@ -246,7 +246,13 @@ public class S3Client {
       if (path.startsWith("/")) {
         path = path.substring(1);
       }
-      return path.split("/");
+      int index = path.indexOf("/");
+      if (index != -1) {
+        // everything up to the first '/' is considered the bucket, everything after that is part of the key (including an optional directory structure)
+        return new String[]{path.substring(0, index),path.substring(index + 1)};
+      } else {
+        throw new IllegalArgumentException("Expected bucket in URI path. Virtual hosted-style requests are only supported for AmazonS3URIs");
+      }
     }
   }
 }

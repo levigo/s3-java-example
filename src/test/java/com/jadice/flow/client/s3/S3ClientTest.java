@@ -22,11 +22,11 @@ import org.yaml.snakeyaml.Yaml;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
-public class S3ClientTest {
+class S3ClientTest {
   private static S3Client s3Client;
 
   @BeforeAll
-  public static void setupClass() throws IOException {
+  static void setupClass() throws IOException {
     final Yaml yaml = new Yaml();
     try (final InputStream inputStream = S3ClientTest.class.getResourceAsStream("/application-test.yml")) {
       final Map yamlMap = yaml.load(inputStream);
