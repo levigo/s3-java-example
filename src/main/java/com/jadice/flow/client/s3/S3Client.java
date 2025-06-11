@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -204,6 +205,24 @@ public class S3Client {
       awsS3Client.deleteObject(req);
     } catch (Exception e) {
       throw new IllegalStateException("Error while deleting s3 object: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Method to showcase the retrieval of s3 object metadata for a url.
+   *
+   * @param s3Url uri of the s3 object whose metadata shall be retrieved.
+   * @return the s3 object metadata that belongs to this url or IllegalStateException.
+   */
+  public ObjectMetadata getObjectMetadata(final URI s3Url) {
+    logger.info("Handling get ObjectMetadata {}", s3Url);
+    final String[] bucketNameAndKey = getBucketNameAndKey(s3Url);
+    logger.debug("Creating GetObjectMetadataRequest with bucket={} and key={}", bucketNameAndKey[0], bucketNameAndKey[1]);
+    final GetObjectMetadataRequest req = new GetObjectMetadataRequest(bucketNameAndKey[0], bucketNameAndKey[1]);
+    try {
+      return this.awsS3Client.getObjectMetadata(req);
+    } catch (Exception e) {
+      throw new IllegalStateException("Error while fetching s3 object metadata: " + e.getMessage());
     }
   }
 
