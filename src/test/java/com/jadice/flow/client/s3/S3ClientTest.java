@@ -41,6 +41,7 @@ class S3ClientTest {
       final boolean trustSelfSigned = (boolean) s3.get("trustSelfSigned");
       final boolean trustAll = (boolean) s3.get("trustAll");
       final boolean pathStyleAccessEnabled = (boolean) s3.get("pathStyleAccessEnabled");
+      final boolean amazonS3URIEnabled = (boolean) s3.get("amazonS3URIEnabled");
       final ConfigProperties configProperties = new ConfigProperties( //
           URI.create(endpoint), //
           bucket, //
@@ -51,7 +52,8 @@ class S3ClientTest {
           protocol, //
           trustSelfSigned, //
           trustAll, //
-          pathStyleAccessEnabled
+          pathStyleAccessEnabled, //
+          amazonS3URIEnabled
       );
       s3Client = new S3Client(configProperties, Duration.ofHours(1));
     }
