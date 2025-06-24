@@ -10,3 +10,4 @@ publisher:
     trustSelfSigned: false
     trustAll: false
     pathStyleAccessEnabled: true
+    amazonS3URIEnabled: true

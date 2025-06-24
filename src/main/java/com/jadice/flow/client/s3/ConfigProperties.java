@@ -22,6 +22,8 @@ public class ConfigProperties {
     boolean trustAll = false;
     // prefer the path style access, as minio uses that mode
     boolean pathStyleAccessEnabled = true;
+    // try to parse URI as AmazonS3URI first
+    boolean amazonS3URIEnabled = true;
 
     public ConfigProperties() {}
 
@@ -35,9 +37,10 @@ public class ConfigProperties {
         final boolean trustSelfSigned, //
         final boolean trustAll //
     ) {
-      this(endpoint, bucket, "", region, accessKey, secretKey, protocol, trustSelfSigned, trustAll, true);
+      this(endpoint, bucket, "", region, accessKey, secretKey, protocol, trustSelfSigned, trustAll, true, true);
     }
 
+    // full-args constructor
     public ConfigProperties( //
         final URI endpoint, //
         final String bucket, //
@@ -48,7 +51,8 @@ public class ConfigProperties {
         final String protocol, //
         final boolean trustSelfSigned, //
         final boolean trustAll, //
-        final boolean pathStyleAccessEnabled //
+        final boolean pathStyleAccessEnabled, //
+        final boolean amazonS3URIEnabled //
     ) {
       this.endpoint = endpoint;
       this.bucket = bucket;
@@ -60,6 +64,7 @@ public class ConfigProperties {
       this.trustSelfSigned = trustSelfSigned;
       this.trustAll = trustAll;
       this.pathStyleAccessEnabled = pathStyleAccessEnabled;
+      this.amazonS3URIEnabled = amazonS3URIEnabled;
     }
 
     public String getAccessKey() {
@@ -141,7 +146,15 @@ public class ConfigProperties {
     public void setPathStyleAccessEnabled(boolean pathStyleAccessEnabled) {
         this.pathStyleAccessEnabled = pathStyleAccessEnabled;
     }
-    
+
+    public boolean isAmazonS3URIEnabled() {
+        return amazonS3URIEnabled;
+    }
+
+    public void setAmazonS3URIEnabled(boolean amazonS3URIEnabled) {
+        this.amazonS3URIEnabled = amazonS3URIEnabled;
+    }
+
     public static String sanitizePath(String s) {
       if (s == null || s.isEmpty()) {
         return "";
@@ -159,7 +172,8 @@ public class ConfigProperties {
         if (o == null || getClass() != o.getClass())
             return false;
         ConfigProperties that = (ConfigProperties) o;
-        return trustSelfSigned == that.trustSelfSigned && trustAll == that.trustAll && pathStyleAccessEnabled == that.pathStyleAccessEnabled && Objects.equals(
+        return trustSelfSigned == that.trustSelfSigned && trustAll == that.trustAll && pathStyleAccessEnabled == that.pathStyleAccessEnabled
+            && amazonS3URIEnabled == that.amazonS3URIEnabled && Objects.equals(
             endpoint, that.endpoint) && Objects.equals(bucket, that.bucket) && Objects.equals(region,
             that.region) && Objects.equals(accessKey, that.accessKey) && Objects.equals(secretKey,
             that.secretKey) && Objects.equals(protocol, that.protocol);
@@ -168,6 +182,6 @@ public class ConfigProperties {
     @Override
     public int hashCode() {
         return Objects.hash(endpoint, bucket, region, accessKey, secretKey, protocol, trustSelfSigned, trustAll,
-            pathStyleAccessEnabled);
+            pathStyleAccessEnabled, amazonS3URIEnabled);
     }
 }

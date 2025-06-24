@@ -72,9 +72,32 @@ class S3UtilsTest {
   })
   void test_getBucketNameAndKey(String uriString) {
     String[] bucketNameAndKey = S3Client.getBucketNameAndKey(
-        URI.create(uriString));
+        URI.create(uriString), createConfigPropertiesWithEndpoint(uriString));
     assertEquals("test-bucket", bucketNameAndKey[0]);
     assertEquals("test-identifier", bucketNameAndKey[1]);
+  }
+
+  @ParameterizedTest
+  @ValueSource(booleans = {
+      true, false
+  })
+  void test_getBucketName_withAmazonS3URIEnabled_false(boolean setPathStyleAccessEnabled) {
+    // given
+    String uriString = "https://test-subdomain.s3.us-east-1.amazonaws.com/test-bucket/test-identifier";
+    ConfigProperties configProperties = createConfigPropertiesWithEndpoint(uriString);
+    configProperties.setAmazonS3URIEnabled(false);
+    configProperties.setPathStyleAccessEnabled(setPathStyleAccessEnabled);
+    // when
+    String[] bucketNameAndKey = S3Client.getBucketNameAndKey(
+        URI.create(uriString), configProperties);
+    // then
+    if (setPathStyleAccessEnabled) {
+      assertEquals("test-bucket", bucketNameAndKey[0]);
+      assertEquals("test-identifier", bucketNameAndKey[1]);
+    } else {
+      assertEquals("test-subdomain", bucketNameAndKey[0]);
+      assertEquals("test-bucket/test-identifier", bucketNameAndKey[1]);
+    }
   }
 
   private ConfigProperties createConfigPropertiesWithEndpoint(String endpoint) {
@@ -96,7 +119,8 @@ class S3UtilsTest {
         "test", //
         false, //
         false, //
-        false //
+        false, //
+        true //
     );
   }
 }

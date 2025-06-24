@@ -169,7 +169,7 @@ public class S3Client {
    */
   public S3Object getObject(final URI s3Url) {
     logger.info("Handling file download {}", s3Url.toString());
-    final String[] bucketNameAndKey = getBucketNameAndKey(s3Url);
+    final String[] bucketNameAndKey = getBucketNameAndKey(s3Url, configurationProperties);
     logger.debug("Creating GetObjectRequest with bucket={} and key={}", bucketNameAndKey[0], bucketNameAndKey[1]);
     final GetObjectRequest req = new GetObjectRequest(bucketNameAndKey[0], bucketNameAndKey[1]);
     try {
@@ -198,7 +198,7 @@ public class S3Client {
    */
   public void deleteObject(final URI presignedUri) {
     logger.info("Handling file delete {}", presignedUri.toString());
-    final String[] bucketNameAndKey = getBucketNameAndKey(presignedUri);
+    final String[] bucketNameAndKey = getBucketNameAndKey(presignedUri, configurationProperties);
     logger.debug("Creating DeleteObjectRequest with bucket={} and key={}", bucketNameAndKey[0], bucketNameAndKey[1]);
     DeleteObjectRequest req = new DeleteObjectRequest(bucketNameAndKey[0], bucketNameAndKey[1]);
     try {
@@ -216,7 +216,7 @@ public class S3Client {
    */
   public ObjectMetadata getObjectMetadata(final URI s3Url) {
     logger.info("Handling get ObjectMetadata {}", s3Url);
-    final String[] bucketNameAndKey = getBucketNameAndKey(s3Url);
+    final String[] bucketNameAndKey = getBucketNameAndKey(s3Url, configurationProperties);
     logger.debug("Creating GetObjectMetadataRequest with bucket={} and key={}", bucketNameAndKey[0], bucketNameAndKey[1]);
     final GetObjectMetadataRequest req = new GetObjectMetadataRequest(bucketNameAndKey[0], bucketNameAndKey[1]);
     try {
@@ -254,24 +254,36 @@ public class S3Client {
         identifier));
   }
 
-  protected static String[] getBucketNameAndKey(final URI uri) {
-    try {
-      final AmazonS3URI amazonS3URI = new AmazonS3URI(uri);
-      return new String[]{
-          amazonS3URI.getBucket(), amazonS3URI.getKey()
-      };
-    } catch (Exception e) {
-      String path = uri.getPath();
-      if (path.startsWith("/")) {
-        path = path.substring(1);
+  protected static String[] getBucketNameAndKey(final URI uri, ConfigProperties configurationProperties) {
+    if (configurationProperties.isAmazonS3URIEnabled()) {
+      try {
+        final AmazonS3URI amazonS3URI = new AmazonS3URI(uri);
+        return new String[]{amazonS3URI.getBucket(), amazonS3URI.getKey()};
+      } catch (Exception e) {
+        return parseURI(uri, configurationProperties.isPathStyleAccessEnabled());
       }
+    } else {
+      return parseURI(uri, configurationProperties.isPathStyleAccessEnabled());
+    }
+  }
+
+  private static String[] parseURI(URI uri, boolean pathStyleAccessEnabled) {
+    String path = uri.getPath();
+    if (path.startsWith("/")) {
+      path = path.substring(1);
+    }
+    if (pathStyleAccessEnabled) {
       int index = path.indexOf("/");
       if (index != -1) {
         // everything up to the first '/' is considered the bucket, everything after that is part of the key (including an optional directory structure)
-        return new String[]{path.substring(0, index),path.substring(index + 1)};
+        return new String[]{path.substring(0, index), path.substring(index + 1)};
       } else {
-        throw new IllegalArgumentException("Expected bucket in URI path. Virtual hosted-style requests are only supported for AmazonS3URIs");
+        throw new IllegalArgumentException("Expected bucket in URI path because pathStyleAccessEnabled=true");
       }
+    } else {
+      // the first subdomain is the bucket, the whole path is the key
+      String[] split = uri.getHost().split("\\.");
+      return new String[]{split[0], path};
     }
   }
 }
